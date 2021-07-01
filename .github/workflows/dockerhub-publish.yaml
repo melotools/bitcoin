@@ -23,58 +23,59 @@ jobs:
         id: get_latest_bitcoin_tag
         run: echo "::set-output name=latest_tag::$(curl -s https://api.github.com/repos/bitcoin/bitcoin/tags | grep -i name | awk 'NR==1{print $2}' | tr -d "\",")"
 
-      - name: echo most recent tag
-        run: echo ${{ steps.get_latest_bitcoin_tag.outputs.latest_tag }}
+      - name: Log into Dockerhub
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Log into Dockerhub
-      #   uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
-      #   with:
-      #     # TODO: set Dockerhub username
-      #     username: ${{ github.actor }}
-      #     # TODO: set Dockerhub Token
-      #     password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull "dependencies1" if it exists
+        run: docker pull $IMAGE_NAME:dependencies1 || true
 
-      # - name: Pull "dependencies1" if it exists
-      #   run: docker pull $IMAGE_NAME:dependencies1 || true
+      - name: Build updated "dependencies1" if necessary
+        run: docker build --pull
+            --target dependencies1
+            --cache-from $IMAGE_NAME:dependencies1
+            -f ./Dockerfile
+            -t $IMAGE_NAME:dependencies1 .
 
-      # - name: Build updated "dependencies1" if necessary
-      #   run: docker build --pull
-      #       --target dependencies1
-      #       --cache-from $IMAGE_NAME:dependencies1
-      #       -f ./Dockerfile
-      #       -t $IMAGE_NAME:dependencies1 .
+      - name: Push "dependencies1"
+        run: docker push $IMAGE_NAME:dependencies1
 
-      # - name: Push "dependencies1"
-      #   run: docker push $IMAGE_NAME:dependencies1
+      - name: Pull "builder" if it exists
+        run: docker pull $IMAGE_NAME:builder || true
 
-      # - name: Pull "builder" if it exists
-      #   run: docker pull $IMAGE_NAME:builder || true
+      - name: Build updated "builder" if necessary
+        run: docker build --pull
+            --target builder
+            --cache-from $IMAGE_NAME:dependencies1
+            --cache-from $IMAGE_NAME:builder
+            # --build-arg BRANCH=$SOURCE_BRANCH
+            --build-arg BUILD_BRANCH=${{ steps.get_latest_bitcoin_tag.outputs.latest_tag }}
+            -f ./Dockerfile
+            -t $IMAGE_NAME:builder .
 
-      # - name: Build updated "builder" if necessary
-      #   run: docker build --pull
-      #       --target builder
-      #       --cache-from $IMAGE_NAME:dependencies1
-      #       --cache-from $IMAGE_NAME:builder
-      #       # --build-arg BRANCH=$SOURCE_BRANCH
-      #       --build-arg BUILD_BRANCH=$BUILD_BRANCH
-      #       -f ./Dockerfile
-      #       -t $IMAGE_NAME:builder .
+      - name: Push "builder"
+        run: docker push $IMAGE_NAME:builder
 
-      # - name: Push "builder"
-      #   run: docker push $IMAGE_NAME:builder
+      - name: Pull final image if it exists
+        run: docker pull $IMAGE_NAME || true
 
-      # - name: Pull final image if it exists
-      #   run: docker pull $IMAGE_NAME || true
+      - name: Build updated final image if necessary
+        run: docker build --pull
+            --cache-from $IMAGE_NAME:dependencies1
+            --cache-from $IMAGE_NAME:builder
+            --cache-from $IMAGE_NAME
+            # --build-arg BRANCH=$SOURCE_BRANCH
+            --build-arg BUILD_BRANCH=${{ steps.get_latest_bitcoin_tag.outputs.latest_tag }}
+            -f ./Dockerfile
+            -t $IMAGE_NAME:most_recent_tag .
 
-      # - name: Build updated final image if necessary
-      #   run: docker build --pull
-      #       --cache-from $IMAGE_NAME:dependencies1
-      #       --cache-from $IMAGE_NAME:builder
-      #       --cache-from $IMAGE_NAME
-      #       # --build-arg BRANCH=$SOURCE_BRANCH
-      #       --build-arg BUILD_BRANCH=$BUILD_BRANCH
-      #       -f ./Dockerfile
-      #       -t $IMAGE_NAME .
+      - name: Push the final image
+        run: docker push $IMAGE_NAME:most_recent_tag
 
-      # - name: Push the final image
-      #   run: docker push $IMAGE_NAME:$BUILD_BRANCH
+      - name: Tag the image with its bitcoin tag as well
+        run: docker tag $IMAGE_NAME:most_recent_tag $IMAGE_NAME:${{ steps.get_latest_bitcoin_tag.outputs.latest_tag }}
+
+      - name: Push the image tagged with its bitcoin tag as well
+        run: docker push $IMAGE_NAME:${{ steps.get_latest_bitcoin_tag.outputs.latest_tag }}
