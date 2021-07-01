@@ -1,8 +1,8 @@
 name: DockerHub Publish
 
-# on:
-#   push:
-#     branches: [ master ]
+on:
+  push:
+    branches: [ master, github-actions ]
 
 env:
   IMAGE_NAME: melotools/bitcoin
