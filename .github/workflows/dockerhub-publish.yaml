@@ -19,11 +19,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get most recent bitcoin tag
-        run: export BUILD_BRANCH=$(curl -s https://api.github.com/repos/bitcoin/bitcoin/tags | grep -i name | awk 'NR==1{print $2}' | tr -d "\",")
+      - name: Get latest bitcoin tag
+        id: get_latest_bitcoin_tag
+        run: echo "::set-output name=latest_tag::$(curl -s https://api.github.com/repos/bitcoin/bitcoin/tags | grep -i name | awk 'NR==1{print $2}' | tr -d "\",")"
 
       - name: echo most recent tag
-        run: echo $BUILD_BRANCH
+        run: echo ${{ steps.get_latest_bitcoin_tag.outputs.latest_tag }}
 
       # - name: Log into Dockerhub
       #   uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
