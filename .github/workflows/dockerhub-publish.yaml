@@ -77,3 +77,9 @@ jobs:
 
       - name: Push the image tagged with its bitcoin tag as well
         run: docker push $IMAGE_NAME:${{ steps.get_latest_bitcoin_tag.outputs.latest_tag }}
+
+      - name: Tag the image as latest as well
+        run: docker tag $IMAGE_NAME:most_recent_tag $IMAGE_NAME:latest
+
+      - name: Push the image tagged as latest as well
+        run: docker push $IMAGE_NAME:latest
