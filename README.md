@@ -1,5 +1,5 @@
 ## Supported tags and respective `Dockerfile` links
-* `latest` ([Dockerfile](https://github.com/XMRto/bitcoin/blob/master/Dockerfile))
+* `latest` ([Dockerfile](https://github.com/melotools/bitcoin/blob/master/Dockerfile))
 
 ---
 
@@ -32,7 +32,7 @@ A few more words about `-rpcauth`:
 Not specifying a host port in `-p <host_port>:<container_port>` docker will automatically assign a free port on the host.
 
 ```
-docker run --rm -d -p 8332 -v <path/to/and/including/wallets>:/bitcoin xmrto/bitcoin -datadir=/bitcoin
+docker run --rm -d -p 8332 -v <path/to/and/including/wallets>:/bitcoin melotools/bitcoin -datadir=/bitcoin
 ```
 
 However, this only works for the common Bitcoin network ports:
