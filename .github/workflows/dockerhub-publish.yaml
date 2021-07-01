@@ -1,0 +1,79 @@
+name: DockerHub Publish
+
+# on:
+#   push:
+#     branches: [ master ]
+
+env:
+  IMAGE_NAME: melotools/bitcoin
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Get most recent bitcoin tag
+        run: export BUILD_BRANCH=$(curl -s https://api.github.com/repos/bitcoin/bitcoin/tags | grep -i name | awk 'NR==1{print $2}' | tr -d "\",")
+
+      - name: echo most recent tag
+        run: echo $BUILD_BRANCH
+
+      # - name: Log into Dockerhub
+      #   uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+      #   with:
+      #     # TODO: set Dockerhub username
+      #     username: ${{ github.actor }}
+      #     # TODO: set Dockerhub Token
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Pull "dependencies1" if it exists
+      #   run: docker pull $IMAGE_NAME:dependencies1 || true
+
+      # - name: Build updated "dependencies1" if necessary
+      #   run: docker build --pull
+      #       --target dependencies1
+      #       --cache-from $IMAGE_NAME:dependencies1
+      #       -f ./Dockerfile
+      #       -t $IMAGE_NAME:dependencies1 .
+
+      # - name: Push "dependencies1"
+      #   run: docker push $IMAGE_NAME:dependencies1
+
+      # - name: Pull "builder" if it exists
+      #   run: docker pull $IMAGE_NAME:builder || true
+
+      # - name: Build updated "builder" if necessary
+      #   run: docker build --pull
+      #       --target builder
+      #       --cache-from $IMAGE_NAME:dependencies1
+      #       --cache-from $IMAGE_NAME:builder
+      #       # --build-arg BRANCH=$SOURCE_BRANCH
+      #       --build-arg BUILD_BRANCH=$BUILD_BRANCH
+      #       -f ./Dockerfile
+      #       -t $IMAGE_NAME:builder .
+
+      # - name: Push "builder"
+      #   run: docker push $IMAGE_NAME:builder
+
+      # - name: Pull final image if it exists
+      #   run: docker pull $IMAGE_NAME || true
+
+      # - name: Build updated final image if necessary
+      #   run: docker build --pull
+      #       --cache-from $IMAGE_NAME:dependencies1
+      #       --cache-from $IMAGE_NAME:builder
+      #       --cache-from $IMAGE_NAME
+      #       # --build-arg BRANCH=$SOURCE_BRANCH
+      #       --build-arg BUILD_BRANCH=$BUILD_BRANCH
+      #       -f ./Dockerfile
+      #       -t $IMAGE_NAME .
+
+      # - name: Push the final image
+      #   run: docker push $IMAGE_NAME:$BUILD_BRANCH
