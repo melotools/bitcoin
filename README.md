@@ -1,9 +1,11 @@
+Builds a Docker image from Bitcoin, which allows running `bitcoind` or `bitcoin-cli` inside a container.
+
+Internal Melotools infrastructure tracks new Bitcoin releases and triggers CI jobs on this repo, to publish the images to [DockerHub](https://hub.docker.com/repository/docker/melotools/bitcoin)
+
 ## Supported tags and respective `Dockerfile` links
 * `latest` ([Dockerfile](https://github.com/melotools/bitcoin/blob/master/Dockerfile))
 
----
-
-For running `bitcoind` or `bitcoin-cli` in a docker container.
+## Usage
 
 In order to switch from user and password based authentication (using `-rpcuser` and `-rpcpassword`) to `-rpcauth` it is worth mentioning, that the docker image needs to be configured in a certain way (using environment variables):
 * `RPC_AUTH` is set and is not `""`.
