@@ -6,7 +6,7 @@ on:
   workflow_dispatch:  # manual trigger (through website or api)
 
 env:
-  IMAGE_NAME: melotools/bitcoin
+  IMAGE_NAME: rinocommunity/bitcoin
 
 
 jobs:
