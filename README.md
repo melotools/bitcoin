@@ -1,9 +1,9 @@
 Builds a Docker image from Bitcoin, which allows running `bitcoind` or `bitcoin-cli` inside a container.
 
-Internal Melotools infrastructure tracks new Bitcoin releases and triggers CI jobs on this repo, to publish the images to [DockerHub](https://hub.docker.com/repository/docker/melotools/bitcoin)
+Internal RINO Community infrastructure tracks new Bitcoin releases and triggers CI jobs on this repo, to publish the images to [DockerHub](https://hub.docker.com/repository/docker/rinocommunity/bitcoin)
 
 ## Supported tags and respective `Dockerfile` links
-* `latest` ([Dockerfile](https://github.com/melotools/bitcoin/blob/master/Dockerfile))
+* `latest` ([Dockerfile](https://github.com/rino-community/bitcoin/blob/master/Dockerfile))
 
 ## Usage
 
@@ -34,7 +34,7 @@ A few more words about `-rpcauth`:
 Not specifying a host port in `-p <host_port>:<container_port>` docker will automatically assign a free port on the host.
 
 ```
-docker run --rm -d -p 8332 -v <path/to/and/including/wallets>:/bitcoin melotools/bitcoin -datadir=/bitcoin
+docker run --rm -d -p 8332 -v <path/to/and/including/wallets>:/bitcoin rinocommunity/bitcoin -datadir=/bitcoin
 ```
 
 However, this only works for the common Bitcoin network ports:
