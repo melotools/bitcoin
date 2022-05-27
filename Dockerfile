@@ -41,7 +41,7 @@ RUN apt-get update -qq && apt-get --no-install-recommends -yqq install \
     && cd /data || exit 1 \
     && rm -rf /data/su-exec.git
 
-FROM melotools/bitcoin:dependencies1 as builder
+FROM rinocomminity/bitcoin:dependencies1 as builder
 WORKDIR /data
 
 ARG PROJECT_URL=https://github.com/bitcoin/bitcoin.git
